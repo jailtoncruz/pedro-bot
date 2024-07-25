@@ -1,0 +1,30 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: ./docker/bot.Dockerfile
+    container_name: discord-musicbot
+    restart: unless-stopped
+    networks:
+      - lavalink-net
+    depends_on:
+      - lavalink
+    env_file:
+      - .env
+    environment:
+      - LAVALINK_URL=lavalink:2333
+
+  lavalink:
+    build:
+      context: .
+      dockerfile: ./docker/lavalink.Dockerfile
+    container_name: lavalink
+    hostname: lavalink
+    restart: unless-stopped
+    networks:
+      - lavalink-net
+    volumes:
+      - ./lavalink/application.yml:/app/application.yml:ro
+
+networks:
+  lavalink-net:

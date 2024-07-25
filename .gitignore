@@ -1,0 +1,6 @@
+node_modules
+lavalink/logs
+lavalink/plugins
+dist
+commands.json
+.env
