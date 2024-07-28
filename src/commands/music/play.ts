@@ -12,7 +12,7 @@ export default {
 				.setDescription(
 					"Coloque o nome ou link da musica que desejar ouvir. 😄"
 				)
-				.setAutocomplete(true)
+				.setAutocomplete(false)
 				.setRequired(true)
 		),
 	async execute(interaction: SlashCommandInteraction) {
@@ -53,10 +53,19 @@ export default {
 			for (let track of result.tracks) player.queue.add(track);
 		else player.queue.add(result.tracks[0]);
 		if (!player.playing && !player.paused) player.play();
+		const hh = Math.floor(player.queue.durationLength / 1000 / 60 / 60);
+		const _h = hh * 60 * 60 * 1000;
+		const mm = Math.floor((player.queue.durationLength - _h) / 1000 / 60);
 		return interaction.reply({
 			content:
 				result.type === "PLAYLIST"
-					? `${result.playlistName} - ${result.tracks.length} musicas adicionas a fila de reprodução`
+					? `Playlist **${result.playlistName}** com **${
+							result.tracks.length
+					  }** músicas adicionas a lista de reprodução.\n**${
+							hh > 0
+								? `${hh} horas e ${mm} minutos de reprodução`
+								: `${mm} minutos de reprodução`
+					  }**`
 					: `${result.tracks[0].title} adicionada a fila`,
 		});
 	},

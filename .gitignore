@@ -4,3 +4,4 @@ lavalink/plugins
 dist
 commands.json
 .env
+lavalink/application.yml
