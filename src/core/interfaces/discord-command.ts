@@ -6,4 +6,5 @@ import {
 export interface DiscordCommand {
 	data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 	execute: Function;
+	autocomplete?: Function;
 }

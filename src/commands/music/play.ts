@@ -1,6 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
 import { DiscordCommand } from "../../core/interfaces/discord-command";
-import { SlashCommandInteraction } from "../../core/interfaces/slash-command-interaction";
+import {
+	SlashCommandInteraction,
+	SlashAutocompleteInteraction,
+} from "../../core/interfaces/slash-command-interaction";
+import { KazagumoTrack } from "kazagumo";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -12,9 +16,26 @@ export default {
 				.setDescription(
 					"Coloque o nome ou link da musica que desejar ouvir. 😄"
 				)
-				.setAutocomplete(false)
+				.setAutocomplete(true)
 				.setRequired(true)
 		),
+	async autocomplete(interaction: SlashAutocompleteInteraction) {
+		const { value } = interaction.options.get("musica", true) as {
+			value?: string;
+		};
+		const kazagumo = interaction.client.kazagumo;
+		if (!kazagumo) throw new Error("Kazagumo is undefined.");
+		if (!value) return;
+		let result = await kazagumo.search(value, {
+			requester: interaction.member,
+		});
+		interaction.respond(
+			result.tracks.slice(0, 5).map((track: KazagumoTrack) => ({
+				name: track.title,
+				value: track.title,
+			}))
+		);
+	},
 	async execute(interaction: SlashCommandInteraction) {
 		const kazagumo = interaction.client.kazagumo;
 		if (!kazagumo) throw new Error("Kazagumo is undefined.");
