@@ -66,13 +66,17 @@ export function createKazagumo(client: DiscordMusicBot) {
 			player.data.get("message")?.edit({ content: `Fila vazia` });
 	});
 	kazagumo.on("playerEmpty", (player) => {
-		const cachedChannel = client.channels.cache.get(player.textId ?? "") as any;
-		cachedChannel
-			.send({ content: `Bot desconectado por inatividade.` })
-			.then((x: any) => player.data.set("message", x));
 		setTimeout(() => {
-			player.destroy();
-		}, 1000 * 20);
+			if (!player.playing) {
+				const cachedChannel = client.channels.cache.get(
+					player.textId ?? ""
+				) as any;
+				cachedChannel
+					.send({ content: `Bot desconectado por inatividade.` })
+					.then((x: any) => player.data.set("message", x));
+				player.destroy();
+			}
+		}, 1000 * 30); // 30s
 	});
 
 	return kazagumo;
