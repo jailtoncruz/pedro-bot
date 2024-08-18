@@ -65,8 +65,10 @@ export function createKazagumo(client: DiscordMusicBot) {
 		if (player.queue.length === 0)
 			player.data.get("message")?.edit({ content: `Fila vazia` });
 	});
+	let timeoutToDisconect: NodeJS.Timeout | undefined = undefined;
 	kazagumo.on("playerEmpty", (player) => {
-		setTimeout(() => {
+		if (timeoutToDisconect) clearTimeout(timeoutToDisconect);
+		timeoutToDisconect = setTimeout(() => {
 			if (!player.playing) {
 				const cachedChannel = client.channels.cache.get(
 					player.textId ?? ""
