@@ -44,39 +44,44 @@ export class DiscordMusicBot<
 			}
 		});
 		this.on(Events.InteractionCreate, async (interaction) => {
-			const _client: DiscordMusicBot = interaction.client as DiscordMusicBot;
-			if (interaction.isAutocomplete()) {
-				const command = _client.commands.get(interaction.commandName);
-				if (command && command.autocomplete)
-					await command.autocomplete(interaction);
-				return;
-			}
-			if (interaction.isChatInputCommand()) {
-				const command = _client.commands.get(interaction.commandName);
-
-				if (!command) {
-					console.error(
-						`No command matching ${interaction.commandName} was found.`
-					);
+			try {
+				const _client: DiscordMusicBot = interaction.client as DiscordMusicBot;
+				if (interaction.isAutocomplete()) {
+					const command = _client.commands.get(interaction.commandName);
+					if (command && command.autocomplete)
+						await command.autocomplete(interaction);
 					return;
 				}
+				if (interaction.isChatInputCommand()) {
+					const command = _client.commands.get(interaction.commandName);
 
-				try {
-					await command.execute(interaction);
-				} catch (error) {
-					console.error(error);
-					if (interaction.replied || interaction.deferred) {
-						await interaction.followUp({
-							content: "There was an error while executing this command!",
-							ephemeral: true,
-						});
-					} else {
-						await interaction.reply({
-							content: "There was an error while executing this command!",
-							ephemeral: true,
-						});
+					if (!command) {
+						console.error(
+							`No command matching ${interaction.commandName} was found.`
+						);
+						return;
+					}
+
+					try {
+						await command.execute(interaction);
+					} catch (error) {
+						console.error(error);
+						if (interaction.replied || interaction.deferred) {
+							await interaction.followUp({
+								content: "There was an error while executing this command!",
+								ephemeral: true,
+							});
+						} else {
+							await interaction.reply({
+								content: "There was an error while executing this command!",
+								ephemeral: true,
+							});
+						}
 					}
 				}
+			} catch (_err) {
+				const err = _err as Error;
+				console.error(err.message, _err);
 			}
 		});
 		return this;

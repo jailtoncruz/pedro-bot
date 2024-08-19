@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { DiscordCommand } from "../../core/interfaces/discord-command";
 import { SlashCommandInteraction } from "../../core/interfaces/slash-command-interaction";
+import { getTimeRemaining } from "../../usecases/get-time-remaining";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -20,7 +21,8 @@ export default {
 		let player = kazagumo.getPlayer(guildId);
 		if (!player) return await interaction.reply("Bot não conectado.");
 		const current = player.queue.current;
-		let baseMsg = "**Lista de reprodução**\n\n";
+		const queueTimeRemaining = getTimeRemaining(player);
+		let baseMsg = `**Lista de reprodução - ${queueTimeRemaining}**\n\n`;
 		if (current) {
 			baseMsg = baseMsg.concat(
 				`(Atual) - **${current.title}** de **${current.author}**\n`

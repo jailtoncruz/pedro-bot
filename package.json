@@ -6,7 +6,7 @@
 	"scripts": {
 		"start:lavalink": "cd lavalink && java -jar lavalink-4_0_7.jar",
 		"start:prod": "node dist/index.js",
-		"dev": "tsx watch src/index.ts",
+		"dev": "tsx src/index.ts",
 		"update-commands": "tsx src/usecases/update-commands.ts",
 		"build": "tsc -b ."
 	},

@@ -5,6 +5,7 @@ import {
 	SlashAutocompleteInteraction,
 } from "../../core/interfaces/slash-command-interaction";
 import { KazagumoTrack } from "kazagumo";
+import { getTimeRemaining } from "../../usecases/get-time-remaining";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -74,19 +75,11 @@ export default {
 			for (let track of result.tracks) player.queue.add(track);
 		else player.queue.add(result.tracks[0]);
 		if (!player.playing && !player.paused) player.play();
-		const hh = Math.floor(player.queue.durationLength / 1000 / 60 / 60);
-		const _h = hh * 60 * 60 * 1000;
-		const mm = Math.floor((player.queue.durationLength - _h) / 1000 / 60);
+		const queueTimeRemaining = getTimeRemaining(player);
 		return interaction.reply({
 			content:
 				result.type === "PLAYLIST"
-					? `Playlist **${result.playlistName}** com **${
-							result.tracks.length
-					  }** músicas adicionas a lista de reprodução.\n**${
-							hh > 0
-								? `${hh} horas e ${mm} minutos de reprodução`
-								: `${mm} minutos de reprodução`
-					  }**`
+					? `Playlist **${result.playlistName}** com **${result.tracks.length}** músicas adicionas a lista de reprodução.\n**${queueTimeRemaining}**`
 					: `${result.tracks[0].title} adicionada a fila`,
 		});
 	},
